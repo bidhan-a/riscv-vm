@@ -1,33 +1,21 @@
-//! # RISC-V Register File
-//!
-//! ## Overview
-//! The RISC-V architecture defines 32 general-purpose integer registers (x0-x31),
-//! each 64 bits wide in RV64I. Register x0 is hardwired to the constant 0.
-//!
-//!
-//! | Register | ABI Name | Description                    | Saved by |
-//! |----------|----------|--------------------------------|----------|
-//! | x0       | zero     | Hard-wired zero                | -        |
-//! | x1       | ra       | Return address                 | Caller   |
-//! | x2       | sp       | Stack pointer                  | Callee   |
-//! | x3       | gp       | Global pointer                 | -        |
-//! | x4       | tp       | Thread pointer                 | -        |
-//! | x5-x7    | t0-t2    | Temporary registers            | Caller   |
-//! | x8       | s0/fp    | Saved register/Frame pointer   | Callee   |
-//! | x9       | s1       | Saved register                 | Callee   |
-//! | x10-x11  | a0-a1    | Function args/return values    | Caller   |
-//! | x12-x17  | a2-a7    | Function arguments             | Caller   |
-//! | x18-x27  | s2-s11   | Saved registers                | Callee   |
-//! | x28-x31  | t3-t6    | Temporary registers            | Caller   |
-//!
-
-/// Register file containing 32 general-purpose 64-bit registers
+/// The RISC-V architecture defines 32 general-purpose integer registers (x0-x31),
+/// each 64 bits wide in RV64I. Register x0 is hardwired to the constant 0.
 ///
-/// # RISC-V ISA Requirement
-/// Register x0 is hardwired to constant 0. Any writes to x0 are discarded,
-/// and reads from x0 always return 0.
+/// | Register | ABI Name | Description                    | Saved by |
+/// |----------|----------|--------------------------------|----------|
+/// | x0       | zero     | Hard-wired zero                | -        |
+/// | x1       | ra       | Return address                 | Caller   |
+/// | x2       | sp       | Stack pointer                  | Callee   |
+/// | x3       | gp       | Global pointer                 | -        |
+/// | x4       | tp       | Thread pointer                 | -        |
+/// | x5-x7    | t0-t2    | Temporary registers            | Caller   |
+/// | x8       | s0/fp    | Saved register/Frame pointer   | Callee   |
+/// | x9       | s1       | Saved register                 | Callee   |
+/// | x10-x11  | a0-a1    | Function args/return values    | Caller   |
+/// | x12-x17  | a2-a7    | Function arguments             | Caller   |
+/// | x18-x27  | s2-s11   | Saved registers                | Callee   |
+/// | x28-x31  | t3-t6    | Temporary registers            | Caller   |
 ///
-/// # Memory Layout
 /// Registers are stored in a fixed-size array for O(1) access time.
 #[derive(Debug, Clone)]
 pub struct Registers {
@@ -38,40 +26,11 @@ pub struct Registers {
 
 impl Registers {
     /// Creates a new register file with all registers initialized to 0
-    ///
-    /// # Examples
-    /// ```
-    /// use riscv_vm::registers::Registers;
-    ///
-    /// let regs = Registers::new();
-    /// assert_eq!(regs.read(0), 0);  // x0 is always 0
-    /// assert_eq!(regs.read(1), 0);  // Other registers start at 0
-    /// ```
     pub fn new() -> Self {
         Self { regs: [0; 32] }
     }
 
     /// Reads the value from a register
-    ///
-    /// # Arguments
-    /// * `reg` - Register number (0-31)
-    ///
-    /// # Returns
-    /// The 64-bit value stored in the register. For x0, always returns 0.
-    ///
-    /// # Panics
-    /// Panics if `reg` >= 32 (invalid register number)
-    ///
-    ///
-    /// # Examples
-    /// ```
-    /// use riscv_vm::registers::Registers;
-    ///
-    /// let mut regs = Registers::new();
-    /// regs.write(5, 42);
-    /// assert_eq!(regs.read(5), 42);
-    /// assert_eq!(regs.read(0), 0);  // x0 always 0
-    /// ```
     #[inline]
     pub fn read(&self, reg: u8) -> u64 {
         assert!(reg < 32, "Invalid register number: {}", reg);
@@ -81,26 +40,6 @@ impl Registers {
     }
 
     /// Writes a value to a register
-    ///
-    /// # Arguments
-    /// * `reg` - Register number (0-31)
-    /// * `value` - 64-bit value to write
-    ///
-    /// # Panics
-    /// Panics if `reg` >= 32
-    ///
-    /// # Examples
-    /// ```
-    /// use riscv_vm::registers::Registers;
-    ///
-    /// let mut regs = Registers::new();
-    /// regs.write(1, 100);
-    /// assert_eq!(regs.read(1), 100);
-    ///
-    /// // Writing to x0 is a no-op
-    /// regs.write(0, 999);
-    /// assert_eq!(regs.read(0), 0);
-    /// ```
     #[inline]
     pub fn write(&mut self, reg: u8, value: u64) {
         assert!(reg < 32, "Invalid register number: {}", reg);
@@ -112,18 +51,6 @@ impl Registers {
     }
 
     /// Resets all registers to 0
-    ///
-    /// Useful for initializing the CPU state or resetting the state between test runs.
-    ///
-    /// # Examples
-    /// ```
-    /// use riscv_vm::registers::Registers;
-    ///
-    /// let mut regs = Registers::new();
-    /// regs.write(5, 42);
-    /// regs.reset();
-    /// assert_eq!(regs.read(5), 0);
-    /// ```
     pub fn reset(&mut self) {
         self.regs = [0; 32];
     }
