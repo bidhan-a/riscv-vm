@@ -4,9 +4,11 @@
 //!
 
 pub mod cpu;
+pub mod decode;
 pub mod memory;
 pub mod registers;
 
 pub use cpu::{CPU, PrivilegeMode};
+pub use decode::{DecodedInstruction, InstructionFormat};
 pub use memory::Memory;
 pub use registers::Registers;
