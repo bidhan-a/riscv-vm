@@ -44,7 +44,7 @@ impl DecodedInstruction {
     fn determine_format(opcode: u8) -> Result<InstructionFormat> {
         match opcode {
             0x33 | 0x3B => Ok(InstructionFormat::R),
-            0x03 | 0x13 | 0x1B | 0x67 | 0x73 => Ok(InstructionFormat::I),
+            0x03 | 0x13 | 0x1B | 0x67 | 0x73 | 0x0F => Ok(InstructionFormat::I),
             0x23 => Ok(InstructionFormat::S),
             0x63 => Ok(InstructionFormat::B),
             0x17 | 0x37 => Ok(InstructionFormat::U),
