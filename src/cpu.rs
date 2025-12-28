@@ -255,29 +255,95 @@ impl CPU {
         Ok(())
     }
 
-    fn execute_slti(&mut self, _inst: &DecodedInstruction) -> Result<()> {
-        todo!("slti")
+    // Execute slti instruction
+    // Format: slti rd, rs1, imm
+    // Specification: x[rd] = x[rs1] <s sext(immediate)
+    fn execute_slti(&mut self, inst: &DecodedInstruction) -> Result<()> {
+        let rs1_value = self.registers.read(inst.rs1) as i64;
+        let result = if rs1_value < inst.imm as i64 { 1 } else { 0 };
+        self.registers.write(inst.rd, result);
+        self.pc += 4;
+        Ok(())
     }
-    fn execute_sltiu(&mut self, _inst: &DecodedInstruction) -> Result<()> {
-        todo!("sltiu")
+
+    // Execute sltiu instruction
+    // Format: sltiu rd, rs1, imm
+    // Specification: x[rd] = x[rs1] <u sext(immediate)
+    fn execute_sltiu(&mut self, inst: &DecodedInstruction) -> Result<()> {
+        let rs1_value = self.registers.read(inst.rs1);
+        let result = if rs1_value < inst.imm as u64 { 1 } else { 0 };
+        self.registers.write(inst.rd, result);
+        self.pc += 4;
+        Ok(())
     }
-    fn execute_xori(&mut self, _inst: &DecodedInstruction) -> Result<()> {
-        todo!("xori")
+
+    // Execute xori instruction
+    // Format: xori rd, rs1, imm
+    // Specification: x[rd] = x[rs1] ^ sext(immediate)
+    fn execute_xori(&mut self, inst: &DecodedInstruction) -> Result<()> {
+        let rs1_value = self.registers.read(inst.rs1);
+        let result = rs1_value ^ (inst.imm as u64);
+        self.registers.write(inst.rd, result);
+        self.pc += 4;
+        Ok(())
     }
-    fn execute_ori(&mut self, _inst: &DecodedInstruction) -> Result<()> {
-        todo!("ori")
+
+    // Execute ori instruction
+    // Format: ori rd, rs1, imm
+    // Specification: x[rd] = x[rs1] | sext(immediate)
+    fn execute_ori(&mut self, inst: &DecodedInstruction) -> Result<()> {
+        let rs1_value = self.registers.read(inst.rs1);
+        let result = rs1_value | (inst.imm as u64);
+        self.registers.write(inst.rd, result);
+        self.pc += 4;
+        Ok(())
     }
-    fn execute_andi(&mut self, _inst: &DecodedInstruction) -> Result<()> {
-        todo!("andi")
+
+    // Execute andi instruction
+    // Format: andi rd, rs1, imm
+    // Specification: x[rd] = x[rs1] & sext(immediate)
+    fn execute_andi(&mut self, inst: &DecodedInstruction) -> Result<()> {
+        let rs1_value = self.registers.read(inst.rs1);
+        let result = rs1_value & (inst.imm as u64);
+        self.registers.write(inst.rd, result);
+        self.pc += 4;
+        Ok(())
     }
-    fn execute_slli(&mut self, _inst: &DecodedInstruction) -> Result<()> {
-        todo!("slli")
+
+    // Execute slli instruction
+    // Format: slli rd, rs1, shamt
+    // Specification: x[rd] = x[rs1] << shamt
+    fn execute_slli(&mut self, inst: &DecodedInstruction) -> Result<()> {
+        let rs1_value = self.registers.read(inst.rs1);
+        let shamt = (inst.imm & 0x3F) as u32;
+        let result = rs1_value << shamt;
+        self.registers.write(inst.rd, result);
+        self.pc += 4;
+        Ok(())
     }
-    fn execute_srli(&mut self, _inst: &DecodedInstruction) -> Result<()> {
-        todo!("srli")
+
+    // Execute srli instruction
+    // Format: srli rd, rs1, shamt
+    // Specification: x[rd] = x[rs1] >>u shamt
+    fn execute_srli(&mut self, inst: &DecodedInstruction) -> Result<()> {
+        let rs1_value = self.registers.read(inst.rs1);
+        let shamt = (inst.imm & 0x3F) as u32;
+        let result = rs1_value >> shamt;
+        self.registers.write(inst.rd, result);
+        self.pc += 4;
+        Ok(())
     }
-    fn execute_srai(&mut self, _inst: &DecodedInstruction) -> Result<()> {
-        todo!("srai")
+
+    // Execute srai instruction
+    // Format: srai rd, rs1, shamt
+    // Specification: x[rd] = x[rs1] >>s shamt
+    fn execute_srai(&mut self, inst: &DecodedInstruction) -> Result<()> {
+        let rs1_value = self.registers.read(inst.rs1);
+        let shamt = (inst.imm & 0x3F) as u32;
+        let result = ((rs1_value as i64) >> shamt) as u64;
+        self.registers.write(inst.rd, result);
+        self.pc += 4;
+        Ok(())
     }
 
     // Execute add instruction
